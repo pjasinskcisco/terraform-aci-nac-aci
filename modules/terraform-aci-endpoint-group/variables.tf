@@ -217,25 +217,15 @@ variable "contract_masters" {
 }
 
 variable "physical_domains" {
-  description = "List of physical domains. Choices `resolution_immediacy`: `immediate`, `lazy`, `pre-provision`. Default value `resolution_immediacy`: `immediate`."
-  type = list(object({
-    name                 = string
-    resolution_immediacy = optional(string, "immediate")
-   }))
-  default = []
+  description = "List of physical domains."
+  type        = list(string)
+  default     = []
 
   validation {
     condition = alltrue([
-      for phydom in var.physical_domains : can(regex("^[a-zA-Z0-9_.:-]{0,64}$", phydom.name))
+      for pd in var.physical_domains : can(regex("^[a-zA-Z0-9_.:-]{0,64}$", pd))
     ])
-    error_message = "`name`: Allowed characters: `a`-`z`, `A`-`Z`, `0`-`9`, `_`, `.`, `:`, `-`. Maximum characters: 64."
-  }
-
-  validation {
-    condition = alltrue([
-      for phydom in var.var.physical_domains : phydom.resolution_immediacy == null || try(contains(["immediate", "lazy", "pre-provision"], phydom.resolution_immediacy), false)
-    ])
-    error_message = "`resolution_immediacy`: Allowed values are `immediate`, `lazy` or `pre-provision`."
+    error_message = "Allowed characters: `a`-`z`, `A`-`Z`, `0`-`9`, `_`, `.`, `:`, `-`. Maximum characters: 64."
   }
 }
 
